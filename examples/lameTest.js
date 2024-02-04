@@ -1,10 +1,17 @@
-import { promises as fs } from "fs";
+import { promises as fs } from "node:fs";
+import { Lame } from "../src/lame.js";
 
-import { Lame } from "../dist/lame";
+/*
+const fs = {
+  readFile: async (fn) => Deno.readFile(fn),
+  open: async (fn, opt) => Deno.open(fn, { read: true, write: opt == "w" }),
+};
+*/
 
-const TEST_DATA_DIR = __dirname + "../test/fixtures";
-const LEFT_FNAME = TEST_DATA_DIR + "/testdata-left.pcm";
-const RIGHT_FNAME = TEST_DATA_DIR + "/testdata-right.pcm";
+//const TEST_DATA_DIR = __dirname + "../test/fixtures";
+const TEST_DATA_DIR = "./test/fixtures";
+const LEFT_FNAME = TEST_DATA_DIR + "/input-stereo-left.pcm";
+const RIGHT_FNAME = TEST_DATA_DIR + "/input-stereo-right.pcm";
 const OUT_FILE = TEST_DATA_DIR + "/sample-out-js.mp3";
 
 async function main() {
@@ -12,6 +19,7 @@ async function main() {
   console.time("Lame.load()");
 
   const lame = await Lame.load({
+    //wasmBinary: new Uint8Array(await Deno.readFile("./src/lame_native.wasm")),
     vbrQuality: 3,
     debug: true
   });
@@ -26,7 +34,7 @@ async function main() {
   const pcmRight = new Float32Array(pcmRightBuf.buffer);
   console.timeEnd("create input array");
   try {
-    await fs.unlink(OUT_FILE);
+    //await fs.unlink(OUT_FILE);
   } catch (err) {
     if (err.code !== "ENOENT") {
       throw err;
@@ -51,9 +59,9 @@ async function main() {
 main()
   .then(() => {
     console.log("done, bye");
-    process.exit(0);
+    Deno.exit(0);
   })
   .catch(err => {
     console.error("fatal error", err);
-    process.exit(1);
+    Deno.exit(1);
   });

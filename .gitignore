@@ -1,3 +1,3 @@
-node_modules
-dist
 examples/sample-out-js.mp3
+example-stereo.mp3
+example-mono.mp3

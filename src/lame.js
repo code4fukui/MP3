@@ -1,13 +1,14 @@
-import { loadWasm, WasmContext, Ptr } from "./lame_native_loader";
+import { loadWasm } from "./lame_native_loader.js";
+import wasmBinary from "./lame_native.wasm.js";
 
-export interface LameInitParams {
-  readonly sampleRate: number;
-  readonly stereo: boolean;
-  readonly debug: boolean;
-  readonly vbrQuality: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export class LameInitParams {
+  sampleRate; // number;
+  stereo; // boolean;
+  debug; // boolean;
+  vbrQuality; // 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 }
 
-export const LAME_INIT_PARAMS_DEFAULTS: LameInitParams = Object.freeze({
+export const LAME_INIT_PARAMS_DEFAULTS = Object.freeze({
   sampleRate: 44100,
   stereo: true,
   vbrQuality: 5,
@@ -15,25 +16,26 @@ export const LAME_INIT_PARAMS_DEFAULTS: LameInitParams = Object.freeze({
 });
 
 export class Lame {
-  private readonly context: WasmContext;
-  private readonly params: Readonly<LameInitParams>;
-  private readonly maxEncodeSamples: number;
-  private readonly structPtr: Ptr;
-  private readonly memoryBuffer: ArrayBuffer;
-  private readonly pcmBuffers: Float32Array[];
-  private readonly outputBuffer: Uint8Array;
+  context; //: WasmContext;
+  params; //: Readonly<LameInitParams>;
+  maxEncodeSamples; //: number;
+  structPtr; //: Ptr;
+  memoryBuffer; //: ArrayBuffer;
+  pcmBuffers; //: Float32Array[];
+  outputBuffer; //: Uint8Array;
 
-  public static async load(
-    params: Partial<{ wasmBinary: ArrayBuffer } & LameInitParams> = {}
+  static async load(
+    params // : Partial<{ wasmBinary: ArrayBuffer } & LameInitParams> = {}
   ) {
-    const { wasmBinary, ...lameParams } = params;
+    //const { wasmBinary, ...lameParams } = params;
+    const lameParams = params;
     const ctx = await loadWasm(wasmBinary);
     return new Lame(ctx, lameParams);
   }
 
-  private constructor(
-    context: WasmContext,
-    partialParams?: Partial<LameInitParams>
+  constructor(
+    context, //: WasmContext,
+    partialParams, // ?: Partial<LameInitParams>
   ) {
     const params = { ...LAME_INIT_PARAMS_DEFAULTS, ...partialParams };
 
@@ -61,11 +63,11 @@ export class Lame {
     );
   }
 
-  public numChannels() {
+  numChannels() {
     return this.params.stereo ? 2 : 1;
   }
 
-  private getStructPointerAtOffset<T>(offset: number): Ptr {
+  getStructPointerAtOffset(offset) {
     const ptr = new Uint32Array(
       this.memoryBuffer,
       this.structPtr + offset,
@@ -74,7 +76,7 @@ export class Lame {
     return ptr;
   }
 
-  public *encode(...channels: Float32Array[]): Iterable<Buffer> {
+  *encode(...channels) { // }: Float32Array[]): Iterable<Buffer> {
     let elapsed = 0;
     let numChunks = 0;
     let totalEncoded = 0;
@@ -123,7 +125,7 @@ export class Lame {
       const nEncoded = this.context._lamejs_encode(this.structPtr, chunkLength);
 
       if (this.params.debug) {
-        const startOfArray = (a: Float32Array) =>
+        const startOfArray = (a) => // : Float32Array) =>
           Array.from(a.slice(0, 3)).map(round4);
         console.debug("lame.encode:", {
           chunkStart,
@@ -146,7 +148,8 @@ export class Lame {
 
       chunkStart = chunkEnd;
 
-      yield Buffer.from(outputChunk);
+      //yield Buffer.from(outputChunk);
+      yield outputChunk;
     }
 
     if (this.params.debug) {
@@ -159,7 +162,7 @@ export class Lame {
     }
   }
 
-  public flush(): Uint8Array {
+  flush() { // }: Uint8Array {
     const nEncoded = this.context._lamejs_flush(this.structPtr);
     if (nEncoded < 0) {
       throw new Error("_vmsg_flush failed, returning " + nEncoded);
@@ -168,11 +171,11 @@ export class Lame {
     return outputChunk;
   }
 
-  public free() {
+  free() {
     this.context._lamejs_free(this.structPtr);
   }
 }
 
-function round4(n: number) {
+function round4(n) {
   return Math.round(n * 10000) / 10000;
 }
