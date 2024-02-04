@@ -8,12 +8,13 @@ export class LameInitParams {
   vbrQuality; // 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 }
 
-export const LAME_INIT_PARAMS_DEFAULTS = Object.freeze({
+export const LAME_INIT_PARAMS_DEFAULTS = /*Object.freeze(*/{
   sampleRate: 44100,
   stereo: true,
   vbrQuality: 5,
   debug: false
-});
+};
+//});
 
 export class Lame {
   context; //: WasmContext;
