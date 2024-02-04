@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>MP3.js demo</title>
+</head><body>
+<h1>MP3.js demo</h1>
+
+<table>
+<tr><td>freq:</td><td><input id=infreq value=440> Hz</td></tr>
+<tr><td>len:</td><td><input id=inlen value=5> sec</td></tr>
+<tr><td>vol:</td><td><input id=invol value=0.3> (0-1)</td></tr>
+<tr><td>quality:</td><td><input id=inquality value=5> (0-9)</td></tr>
+<tr><td>sampleRate:</td><td><input id=inrate value=44100> Hz</td></tr>
+</table>
+<button id=btnmake>make</button>
+
+<script type="module">
+import { MP3 } from "./MP3.js";
+import { downloadFile } from "https://js.sabae.cc/downloadFile.js";
+
+btnmake.onclick = async () => {
+  const sampleRate = inrate.value;
+  const freq = parseFloat(infreq.value);
+  const lensec = parseFloat(inlen.value);
+  const vol = parseFloat(invol.value);
+  const len = (lensec * sampleRate) >> 0;
+  const vbrQuality = parseInt(inquality.value);
+
+  const buf = new Float32Array(len);
+  for (let i = 0; i < len; i++) {
+    const th = (i * freq / sampleRate) * (2 * Math.PI);
+    buf[i] = Math.sin(th) * vol;
+  }
+  console.log(buf);
+  const bin = await MP3.encode(buf, { sampleRate, vbrQuality })
+  downloadFile("test.mp3", bin);
+};
+</script>
+
+<hr>
+<a href=https://github.com/code4fukui/MP3/>src on GitHub</a><br>
+
+</body></html>
+

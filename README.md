@@ -2,7 +2,11 @@
 
 MP3.js is a mp3 encoder ES module for web and Deno by JavaScript and WebAssembly forked from [lame-wasm](https://github.com/vincentcr/lame-wasm)
 
-## Usage
+## demo
+
+- https://code4fukui.github.io/MP3/
+
+## usage
 
 ```js
 import { MP3 } from "https://code4fukui.github.io/MP3/MP3.js";
