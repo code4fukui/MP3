@@ -1,13 +1,11 @@
 # MP3.js
 
-> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
+MP3.js は、JavaScript と WebAssembly で構築された、Web および Deno 向けの MP3 エンコーダー ES モジュールです。[lame-wasm](https://github.com/vincentcr/lame-wasm) プロジェクトからフォークされました。
 
-MP3.js is an MP3 encoder ES module for web and Deno, built using JavaScript and WebAssembly. It was forked from the [lame-wasm](https://github.com/vincentcr/lame-wasm) project.
-
-## Demo
+## デモ
 - https://code4fukui.github.io/MP3/
 
-## Usage
+## 使い方
 
 ```js
 import { MP3 } from "https://code4fukui.github.io/MP3/MP3.js";
@@ -32,14 +30,14 @@ const mp3bin = await MP3.encode([buf], {
 console.log(mp3bin, mp3bin.length);
 ```
 
-## Dependencies
-- Forked from [lame-wasm](https://github.com/vincentcr/lame-wasm)
-- Built with [bin2js.js](https://github.com/code4fukui/bin2js/)
+## 依存関係
+- [lame-wasm](https://github.com/vincentcr/lame-wasm) からフォーク
+- [bin2js.js](https://github.com/code4fukui/bin2js/) を使用してビルド
 
-## Build
+## ビルド
 ```sh
 deno run -A https://code4fukui.github.io/bin2js/bin2js.js src/lame_native.wasm
 ```
 
-## License
+## ライセンス
 MPL-2.0
